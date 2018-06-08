@@ -18,7 +18,13 @@
 - Version Control: Jonathan
 
 ### Accomplishments
-### Questions
+- Team was able to redesign the board to better match the magnetic board design
+- Added the feature for attaching sound files to tiles
+- Added feature to redirect student when teacher closes the session
+
+### Challenges
+- Application starts to delay overtime
+- Need MP3 files for individual sounds
 
 -----------------------
 <!-- Below are previous group notes that don't fit with the standardized meeting notes established 6/8. -->

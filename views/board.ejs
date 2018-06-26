@@ -30,6 +30,7 @@
             var roomName = document.getElementById('Welcome').getAttribute("name")
             var socket = io.connect();
             var admin = document.getElementById('Welcome').getAttribute("admin")
+            var audio = new Audio();
 
             /* ======================== 
             ONLINE STATUS (GREEN LIGHT)
@@ -145,21 +146,22 @@
                     clone.style.left = position.left + "px";
 
 
-                    if (backside.style.display == "none") {
+                    // if (backside.style.display == "none") {
                         // insert the clone to the page
-                        document.getElementsByClassName('section')[0].appendChild(clone);
+                        // document.getElementsByClassName('section')[0].appendChild(clone);
+                        $(original).parent().append(clone);
                         // for each board, make the id of each cloned tile unique
                         list = document.getElementsByClassName('cloned-tile');
                         for (var i = 1; i <= list.length; i++) {
                             clone.id = original.id + (i + 1);
                         }
-                    } else {
-                        document.getElementsByClassName('section')[7].appendChild(clone);
-                        list = document.getElementsByClassName('cloned-tile');
-                        for (var i = 1; i <= list.length; i++) {
-                            clone.id = original.id + (i + 1);
-                        }
-                    }
+                    // } else {
+                    //     document.getElementsByClassName('section')[7].appendChild(clone);
+                    //     list = document.getElementsByClassName('cloned-tile');
+                    //     for (var i = 1; i <= list.length; i++) {
+                    //         clone.id = original.id + (i + 1);
+                    //     }
+                    // }
 
                     // start a drag interaction targeting the clone
                     interaction.start({ name: 'drag' }, event.interactable, clone);
@@ -419,9 +421,17 @@
             ================ */
 
             $(document).on('click',function(event){
-                console.log('id',event.target.innerText);
-                var id = event.target.innerText;
-                socket.emit('clicked',{id: id})
+                // socket.emit('clicked',{id: id})
+                // console.log(event.target.classList);
+                if($(event.target).parent().hasClass("cloned-tile")) {
+                    console.log('id',event.target.innerText);
+                    var id = event.target.innerText;
+                    var section = $(event.target).parent().parent().attr("id");
+                    console.log(`playing /audio/${section}/${id}.mp3`);
+                    audio.src = `/audio/${section}/${id}.mp3`;
+                    audio.load();
+                    audio.play();
+                }
             })
 
             socket.on('clicked',(data)=>{

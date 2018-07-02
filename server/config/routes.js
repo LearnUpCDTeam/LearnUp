@@ -25,7 +25,7 @@ module.exports = function (app) {
     if (request.session.user) {
       users.dashboard(request, response);
     } else {
-      response.redirect('/index');
+      response.redirect('/');
     }
   });
   // Admin route - renders admin.ejs:
@@ -35,57 +35,35 @@ module.exports = function (app) {
 
   app.get('/logout', (request, response) => {
     request.session.destroy();
-    response.redirect('/index');
+    response.redirect('/');
   });
 
   // enter an individual learnup room
-  app.get('/room/:id', (request, response) => {
-    users.enterRoom(request, response);
-  });
+  app.get('/room/:id', users.enterRoom);
 
-  app.get('/tiles', (request, response) => {
-    tiles.getTiles(request, response);
-  });
+  app.get('/tiles', tiles.getTiles);
 
-    // Class has ended, render page with message
-    app.get('/end', (request, response) => {
-      response.render('endOfClass');
-    });  
+  // Class has ended, render page with message
+  app.get('/end', (request, response) => {
+    response.render('endOfClass');
+  });  
 
-  app.post('/login', (request, response) => {
-    users.login(request, response);
-  });
+  app.post('/login', users.login);
 
   // New user post route
-  app.post('/new', (request, response) => {
-    users.newUser(request, response);
-  });
+  app.post('/new', users.newUser);
 
-  app.post('/edit', (request, response) => {
-    users.editUser(request, response);
-  });
+  app.post('/edit', users.editUser);
 
-  app.post('/promote/:id', (request, response) => {
-    users.promote(request, response, 1);
-  });
+  app.post('/promote/:id', users.promote);
 
-  app.post('/demote/:id', (request, response) => {
-    users.promote(request, response, -1);
-  });
+  app.post('/demote/:id', users.demote);
 
-  app.post('/delete/:id', (request, response) => {
-    users.delete(request, response);
-  });
+  app.post('/delete/:id', users.delete);
 
-  app.post('/forgetpassword', (request, response) => {
-    users.forgetpassword(request, response)
-  });
+  app.post('/forgetpassword', users.forgetpassword);
 
-  app.get('/reset/:token', (request, response) => {
-    users.getUserinforgetpw(request, response)
-  });
+  app.get('/reset/:token', users.getUserinforgetpw);
 
-  app.post('/resetpw',(request, response) => {
-    users.resetpassword(request, response)
-  })
+  app.post('/resetpw', users.resetpassword)
 };

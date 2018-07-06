@@ -31,6 +31,13 @@
             var socket = io.connect();
             var admin = document.getElementById('Welcome').getAttribute("admin")
             var audio = new Audio();
+            var test_word = [
+                {section: "starstop", id: "b"},
+                {section: "dipper2", id: "oo"},
+                {section: "starstop", id: "k"},
+                {section: "starsright", id: "s"}
+            ];
+            var playlist = [];
 
             /* ======================== 
             ONLINE STATUS (GREEN LIGHT)
@@ -434,6 +441,20 @@
                 }
             })
 
+            function playNext() {
+                if(playlist.length > 0) {
+                    var next_sound = playlist.pop();
+                    audio.src = `/audio/${next_sound.section}/${next_sound.id}.mp3`;
+                    audio.load();
+                    audio.play();
+                }
+            }
+            $("#test_audio").click(function(event){
+                playlist = test_word.slice().reverse();
+                playNext();
+            });
+            audio.addEventListener("ended", playNext);
+
             socket.on('clicked',(data)=>{
                 console.log('sending back from server data',data.id)
                 $(data.id).trigger('click');
@@ -480,6 +501,7 @@
                             <h5>Teacher</h5>
                         </div>
                         <% } %>
+            <button class="btn btn-primary" id="test_audio">Test Audio</button>
 
         </div>
 

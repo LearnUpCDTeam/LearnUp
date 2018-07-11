@@ -427,19 +427,19 @@
                  Sound 
             ================ */
 
-            $(document).on('click',function(event){
-                // socket.emit('clicked',{id: id})
-                // console.log(event.target.classList);
-                if($(event.target).parent().hasClass("cloned-tile")) {
-                    console.log('id',event.target.innerText);
-                    var id = event.target.innerText;
-                    var section = $(event.target).parent().parent().attr("id");
-                    console.log(`playing /audio/${section}/${id}.mp3`);
-                    audio.src = `/audio/${section}/${id}.mp3`;
-                    audio.load();
-                    audio.play();
-                }
-            })
+            // $(document).on('click',function(event){
+            //     // socket.emit('clicked',{id: id})
+            //     // console.log(event.target.classList);
+            //     if($(event.target).parent().hasClass("cloned-tile")) {
+            //         console.log('id',event.target.innerText);
+            //         var id = event.target.innerText;
+            //         var section = $(event.target).parent().parent().attr("id");
+            //         console.log(`playing /audio/${section}/${id}.mp3`);
+            //         audio.src = `/audio/${section}/${id}.mp3`;
+            //         audio.load();
+            //         audio.play();
+            //     }
+            // })
 
             function playNext() {
                 if(playlist.length > 0) {
@@ -455,8 +455,8 @@
                     playlist.push({
                         section: $(tile).parent().attr("id"),
                         id: $.trim($($(tile).children("p")[0]).text()),
-                        left: $(tile).position().left,
-                        top: $(tile).position().top
+                        left: $(tile).position().left + 5,
+                        top: $(tile).position().top + 5
                     });
                 });
                 target_box = $("#backside").css("display") == "none" ? "#frontword" : "#backword";

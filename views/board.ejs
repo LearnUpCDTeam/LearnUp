@@ -449,9 +449,30 @@
                     audio.play();
                 }
             }
-            $("#test_audio").click(function(event){
-                playlist = test_word.slice().reverse();
-                playNext();
+            $("#play_audio").click(function(event){
+                playlist = [];
+                $.each($(".cloned-tile"), function(idx, tile) {
+                    playlist.push({
+                        section: $(tile).parent().attr("id"),
+                        id: $.trim($($(tile).children("p")[0]).text()),
+                        left: $(tile).position().left,
+                        top: $(tile).position().top
+                    });
+                });
+                target_box = $("#backside").css("display") == "none" ? "#frontword" : "#backword";
+                playlist = playlist.filter(function(tile) {
+                    pos = $(target_box).position();
+                    w = $(target_box).width();
+                    h = $(target_box).height();
+                    return tile.left >= pos.left &&
+                        tile.top >= pos.top &&
+                        tile.left <= pos.left + w &&
+                        tile.top <= pos.top + h;
+                });
+                playlist.sort(function(a, b){return b.left - a.left});
+                if(playlist.length > 0) {
+                    playNext();
+                }
             });
             audio.addEventListener("ended", playNext);
 
@@ -501,7 +522,7 @@
                             <h5>Teacher</h5>
                         </div>
                         <% } %>
-            <button class="btn btn-primary" id="test_audio">Test Audio</button>
+            <button class="btn btn-primary" id="play_audio">Play Audio</button>
 
         </div>
 
@@ -532,6 +553,7 @@
 					</div>
                     <div class="section" id="starsbottom">
                     </div>
+                    <div class="wordbox" id="frontword"></div>
                 </div>
             </div>
         </div>
@@ -544,6 +566,7 @@
                     <div class="section" id="prefixes"></div>
                     <div class="section" id="endingsright"></div>
                     <div class="section" id="endingsbottom"></div>
+                    <div class="wordbox" id="backword"></div>
                 </div>
             </div>
         </div>

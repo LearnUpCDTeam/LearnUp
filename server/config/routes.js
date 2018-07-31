@@ -35,7 +35,7 @@ module.exports = function (app) {
 
   app.get('/logout', (request, response) => {
     request.session.destroy();
-    response.redirect('/index');
+    response.redirect('/');
   });
 
   // enter an individual learnup room

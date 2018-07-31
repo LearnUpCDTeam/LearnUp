@@ -40,8 +40,8 @@ table th {
   margin-top: 5%;
 }
 
-.header {
-  text-align: center !important;
+#header {
+  text-align: left !important;
 }
 
 .error-message {
@@ -60,6 +60,7 @@ table th {
 }
 
 .forgetpw{
+  padding-top: 8px;
   float: right;
 }
 
@@ -69,14 +70,38 @@ table th {
   padding: 2em;
 }
 
-#header {
+.header {
   background-color: black !important;
   color: white;
+  height: 100px;
+  display: inline-block;
+  box-sizing: border-box;
+  width: 100%;
+  vertical-align: middle;
+  
+}
+.logoImg{
+  height: 50px;
+  margin-top: 25px;
+  margin-left: 20px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.header h1 {
+  margin-left: 20px;
+  display: inline-block;
+  /* padding: 0.5em 0.5em 0.5em 1em; */
+  width: 800px;
+  vertical-align: bottom;
 }
 
-#header h1 {
-  margin: 0;
-  padding: 0.5em 0.5em 0.5em 1em;
+.footer {
+  background-color: black !important;
+  color: white;
+  height: 100px;
+  position:absolute;
+  bottom:0;
+  width: 100%;
 }
 
 #form {

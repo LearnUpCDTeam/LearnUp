@@ -31,12 +31,6 @@
             var socket = io.connect();
             var admin = document.getElementById('Welcome').getAttribute("admin")
             var audio = new Audio();
-            var test_word = [
-                {section: "starstop", id: "b"},
-                {section: "dipper2", id: "oo"},
-                {section: "starstop", id: "k"},
-                {section: "starsright", id: "s"}
-            ];
             var playlist = [];
 
             /* ======================== 
@@ -116,16 +110,14 @@
                         id = event.currentTarget.id
 
                         // keep the dragged position in the data-x/data-y attributes 
-                        x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
-                            y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+                        // x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+                        //     y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
                         target.classList.remove('moving');
                         socket.emit('finished_drag', { room: roomName, id: id })
                     }
 
-                }).on('move', function (event) {
-                    setUpTileDuplication(event);
-                });
-
+                }).on('move', setUpTileDuplication);
+            
             function setUpTileDuplication(event) {
                 var interaction = event.interaction;
 
@@ -181,7 +173,7 @@
                     setUpHoverEvent();
 
                 }
-                socket.emit('tile_duplicated', { room: roomName, id: id, clone: clone })
+                socket.emit('tile_duplicated', { room: roomName, id: id, clone: clone, section: $(original).parent().attr("id") })
             }
 
             socket.on('tileduplicate', function (data) {
@@ -196,19 +188,20 @@
                 clone.style.top = position.top + "px";
                 clone.style.left = position.left + "px";
 
-                if (backside.style.display == "none") {
-                    document.getElementsByClassName('section')[0].appendChild(clone);
+                $(`#${data.response.section}`).append(clone);
+                // if (backside.style.display == "none") {
+                //     document.getElementsByClassName('section')[0].appendChild(clone);
                     list = document.getElementsByClassName('cloned-tile');
                     for (var i = 1; i <= list.length; i++) {
                         clone.id = target.id + (i + 1);
                     }
-                } else {
-                    document.getElementsByClassName('section')[7].appendChild(clone);
-                    list = document.getElementsByClassName('cloned-tile');
-                    for (var i = 1; i <= list.length; i++) {
-                        clone.id = target.id + (i + 1);
-                    }
-                }
+                // } else {
+                //     document.getElementsByClassName('section')[7].appendChild(clone);
+                //     list = document.getElementsByClassName('cloned-tile');
+                //     for (var i = 1; i <= list.length; i++) {
+                //         clone.id = target.id + (i + 1);
+                //     }
+                // }
             })
 
             function dragMoveListener(event) {
@@ -258,18 +251,16 @@
             })
 
             $("#switch").click(() => {
-                socket.emit("switch", { room: roomName })
-                switchboard()
+                socket.emit("switch", { room: roomName });
+                switchboard();
             })
 
             $("#reset").click(() => {
-                socket.emit("reset", { room: roomName })
-                setBoard()
+                socket.emit("reset", { room: roomName });
+                setBoard();
             })
 
-            socket.on("reset_tiles", function () {
-                setBoard()
-            })
+            socket.on("reset_tiles", setBoard);
 
             //set up the highlight listeners for hover/mouseover event
             function setUpHoverEvent() {
@@ -284,7 +275,7 @@
             }
 
             function setBoard() {
-                $.get('http://localhost:8000/tiles').then((tiles) => {
+                $.get('/tiles').then((tiles) => {
                     const { earth, starstop, starsleft, starsright, starsright2, starsbottom, dipper, dipper2, crescent } = tiles.sideOne[0]
                     const { prefixes, endingsright, endingsbottom, roots } = tiles.sideTwo[0]
 
@@ -350,9 +341,7 @@
 
             setBoard()
 
-            socket.on('switch_boards', function () {
-                switchboard()
-            })
+            socket.on('switch_boards', switchboard);
 
             function switchboard() {
                 var backside = document.getElementById('backside');
@@ -380,7 +369,7 @@
 
             socket.on("terminate_by_teacher", function () {
                 console.log("teacher has terminated the room");
-                window.location.replace("http://localhost:8000/end");
+                window.location.replace("/end");
             });
 
             socket.on("user disconnected", function() {
@@ -449,7 +438,8 @@
                     audio.play();
                 }
             }
-            $("#play_audio").click(function(event){
+            function playAudio() {
+                // console.log("playAudio()")
                 playlist = [];
                 $.each($(".cloned-tile"), function(idx, tile) {
                     playlist.push({
@@ -473,7 +463,15 @@
                 if(playlist.length > 0) {
                     playNext();
                 }
+            }
+            $("#play_audio").click(function() {
+                // console.log("emitting playing_audio")
+                socket.emit("playing_audio", {
+                    room: roomName
+                });
+                playAudio();
             });
+            socket.on("play_audio", playAudio);
             audio.addEventListener("ended", playNext);
 
             socket.on('clicked',(data)=>{
@@ -504,9 +502,10 @@
                         <button class="btn btn-primary ib">Back to Dashboard</button>
                     </a> -->
                     <button class="btn btn-warning ib" id="reset">Reset Board</button>
-                    <a href="http://localhost:8000/admin/dashboard">
+                    <a href="/admin/dashboard">
                         <button class="btn btn-danger ib" id="terminate">Terminate</button>
                     </a>
+                    <button class="btn btn-primary" id="play_audio">Play Audio</button>
                 </div>
 
                 <!-- <div id="light">
@@ -522,7 +521,6 @@
                             <h5>Teacher</h5>
                         </div>
                         <% } %>
-            <button class="btn btn-primary" id="play_audio">Play Audio</button>
 
         </div>
 

@@ -212,6 +212,11 @@ io.sockets.on('connection', (socket) => {
     socket.broadcast.to(data.room).emit('switch_boards');
   });
 
+  socket.on('playing_audio', (data) => {
+    console.log("servser play_audio");
+    socket.broadcast.to(data.room).emit('play_audio');
+  });
+
   socket.on('terminate', (data) => {
     socket.broadcast.emit('terminate_by_teacher');
     io.emit('user disconnected');

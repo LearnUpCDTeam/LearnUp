@@ -12,9 +12,9 @@
 
 <body>
     <div class="container">
-        <div class="header">
-            <h1>LearnUp Digital Reading Board Login</h1>
-        </div>
+
+        <!-- "Including" the header file -->
+        <% include header.ejs %>
 
         <% if (message.length > 0) { %>
             <p class="error-message">
@@ -44,6 +44,7 @@
                     </form>
 
                 </div>
+            <% include footer.ejs %>
 </body>
 
 </html>

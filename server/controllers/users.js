@@ -66,7 +66,7 @@ module.exports = {
     User.findOne({ email: request.session.email }).then(() => {
       User.findOne({ email: request.body.newuseremail }).then((user) => {
         if (!user) {
-          const admin = this.getAdminCode(request.body.newuseradmin);
+          const admin = module.exports.getAdminCode(request.body.newuseradmin);
           bcrypt.hash('default', 10).then((newHash) => {
             User.create({
               email: request.body.newuseremail,
@@ -123,7 +123,7 @@ module.exports = {
       User.findOne({ email: request.body.edituseremail }).then((updateUser) => {
         if (updateUser) {
           bcrypt.hash(request.body.edituserpassword, 10).then((newHash) => {
-            const admin = this.getAdminCode(request.body.edituseradmin);
+            const admin = module.exports.getAdminCode(request.body.edituseradmin);
             if (adminUser.admin > updateUser.admin) {
               updateUser.hash = newHash;
               updateUser.admin = admin;
@@ -162,10 +162,10 @@ module.exports = {
     return admin;
   },
   promote(request, response) {
-    this.changeAccessLevel(request, response, 1);
+    module.exports.changeAccessLevel(request, response, 1);
   },
   demote(request, response) {
-    this.changeAccessLevel(request, response, -1);
+    module.exports.changeAccessLevel(request, response, -1);
   },
   changeAccessLevel(request, response, type) {
     User.findOne({ email: request.session.user }).then((adminUser) => {

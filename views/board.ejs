@@ -30,6 +30,14 @@
             var roomName = document.getElementById('Welcome').getAttribute("name")
             var socket = io.connect();
             var admin = document.getElementById('Welcome').getAttribute("admin")
+            var audio = new Audio();
+            var test_word = [
+                {section: "starstop", id: "b"},
+                {section: "dipper2", id: "oo"},
+                {section: "starstop", id: "k"},
+                {section: "starsright", id: "s"}
+            ];
+            var playlist = [];
 
             /* ======================== 
             ONLINE STATUS (GREEN LIGHT)
@@ -145,21 +153,22 @@
                     clone.style.left = position.left + "px";
 
 
-                    if (backside.style.display == "none") {
+                    // if (backside.style.display == "none") {
                         // insert the clone to the page
-                        document.getElementsByClassName('section')[0].appendChild(clone);
+                        // document.getElementsByClassName('section')[0].appendChild(clone);
+                        $(original).parent().append(clone);
                         // for each board, make the id of each cloned tile unique
                         list = document.getElementsByClassName('cloned-tile');
                         for (var i = 1; i <= list.length; i++) {
                             clone.id = original.id + (i + 1);
                         }
-                    } else {
-                        document.getElementsByClassName('section')[7].appendChild(clone);
-                        list = document.getElementsByClassName('cloned-tile');
-                        for (var i = 1; i <= list.length; i++) {
-                            clone.id = original.id + (i + 1);
-                        }
-                    }
+                    // } else {
+                    //     document.getElementsByClassName('section')[7].appendChild(clone);
+                    //     list = document.getElementsByClassName('cloned-tile');
+                    //     for (var i = 1; i <= list.length; i++) {
+                    //         clone.id = original.id + (i + 1);
+                    //     }
+                    // }
 
                     // start a drag interaction targeting the clone
                     interaction.start({ name: 'drag' }, event.interactable, clone);
@@ -418,11 +427,54 @@
                  Sound 
             ================ */
 
-            $(document).on('click',function(event){
-                console.log('id',event.target.innerText);
-                var id = event.target.innerText;
-                socket.emit('clicked',{id: id})
-            })
+            // $(document).on('click',function(event){
+            //     // socket.emit('clicked',{id: id})
+            //     // console.log(event.target.classList);
+            //     if($(event.target).parent().hasClass("cloned-tile")) {
+            //         console.log('id',event.target.innerText);
+            //         var id = event.target.innerText;
+            //         var section = $(event.target).parent().parent().attr("id");
+            //         console.log(`playing /audio/${section}/${id}.mp3`);
+            //         audio.src = `/audio/${section}/${id}.mp3`;
+            //         audio.load();
+            //         audio.play();
+            //     }
+            // })
+
+            function playNext() {
+                if(playlist.length > 0) {
+                    var next_sound = playlist.pop();
+                    audio.src = `/audio/${next_sound.section}/${next_sound.id}.mp3`;
+                    audio.load();
+                    audio.play();
+                }
+            }
+            $("#play_audio").click(function(event){
+                playlist = [];
+                $.each($(".cloned-tile"), function(idx, tile) {
+                    playlist.push({
+                        section: $(tile).parent().attr("id"),
+                        id: $.trim($($(tile).children("p")[0]).text()),
+                        left: $(tile).position().left + 5,
+                        top: $(tile).position().top + 5
+                    });
+                });
+                target_box = $("#backside").css("display") == "none" ? "#frontword" : "#backword";
+                playlist = playlist.filter(function(tile) {
+                    pos = $(target_box).position();
+                    w = $(target_box).width();
+                    h = $(target_box).height();
+                    return tile.left >= pos.left &&
+                        tile.top >= pos.top &&
+                        tile.left <= pos.left + w &&
+                        tile.top <= pos.top + h;
+                });
+                playlist.sort(function(a, b){return b.left - a.left});
+                if(playlist.length > 0) {
+                    playNext();
+                }
+            });
+            audio.addEventListener("ended", playNext);
 
             socket.on('clicked',(data)=>{
                 console.log('sending back from server data',data.id)
@@ -470,6 +522,7 @@
                             <h5>Teacher</h5>
                         </div>
                         <% } %>
+            <button class="btn btn-primary" id="play_audio">Play Audio</button>
 
         </div>
 
@@ -500,6 +553,7 @@
 					</div>
                     <div class="section" id="starsbottom">
                     </div>
+                    <div class="wordbox" id="frontword"></div>
                 </div>
             </div>
         </div>
@@ -512,6 +566,7 @@
                     <div class="section" id="prefixes"></div>
                     <div class="section" id="endingsright"></div>
                     <div class="section" id="endingsbottom"></div>
+                    <div class="wordbox" id="backword"></div>
                 </div>
             </div>
         </div>

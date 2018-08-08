@@ -30,6 +30,8 @@
             var roomName = document.getElementById('Welcome').getAttribute("name")
             var socket = io.connect();
             var admin = document.getElementById('Welcome').getAttribute("admin")
+            var audio = new Audio();
+            var playlist = [];
 
             /* ======================== 
             ONLINE STATUS (GREEN LIGHT)
@@ -108,16 +110,14 @@
                         id = event.currentTarget.id
 
                         // keep the dragged position in the data-x/data-y attributes 
-                        x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
-                            y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+                        // x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+                        //     y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
                         target.classList.remove('moving');
                         socket.emit('finished_drag', { room: roomName, id: id })
                     }
 
-                }).on('move', function (event) {
-                    setUpTileDuplication(event);
-                });
-
+                }).on('move', setUpTileDuplication);
+            
             function setUpTileDuplication(event) {
                 var interaction = event.interaction;
 
@@ -145,21 +145,22 @@
                     clone.style.left = position.left + "px";
 
 
-                    if (backside.style.display == "none") {
+                    // if (backside.style.display == "none") {
                         // insert the clone to the page
-                        document.getElementsByClassName('section')[0].appendChild(clone);
+                        // document.getElementsByClassName('section')[0].appendChild(clone);
+                        $(original).parent().append(clone);
                         // for each board, make the id of each cloned tile unique
                         list = document.getElementsByClassName('cloned-tile');
                         for (var i = 1; i <= list.length; i++) {
                             clone.id = original.id + (i + 1);
                         }
-                    } else {
-                        document.getElementsByClassName('section')[7].appendChild(clone);
-                        list = document.getElementsByClassName('cloned-tile');
-                        for (var i = 1; i <= list.length; i++) {
-                            clone.id = original.id + (i + 1);
-                        }
-                    }
+                    // } else {
+                    //     document.getElementsByClassName('section')[7].appendChild(clone);
+                    //     list = document.getElementsByClassName('cloned-tile');
+                    //     for (var i = 1; i <= list.length; i++) {
+                    //         clone.id = original.id + (i + 1);
+                    //     }
+                    // }
 
                     // start a drag interaction targeting the clone
                     interaction.start({ name: 'drag' }, event.interactable, clone);
@@ -172,7 +173,7 @@
                     setUpHoverEvent();
 
                 }
-                socket.emit('tile_duplicated', { room: roomName, id: id, clone: clone })
+                socket.emit('tile_duplicated', { room: roomName, id: id, clone: clone, section: $(original).parent().attr("id") })
             }
 
             socket.on('tileduplicate', function (data) {
@@ -187,19 +188,20 @@
                 clone.style.top = position.top + "px";
                 clone.style.left = position.left + "px";
 
-                if (backside.style.display == "none") {
-                    document.getElementsByClassName('section')[0].appendChild(clone);
+                $(`#${data.response.section}`).append(clone);
+                // if (backside.style.display == "none") {
+                //     document.getElementsByClassName('section')[0].appendChild(clone);
                     list = document.getElementsByClassName('cloned-tile');
                     for (var i = 1; i <= list.length; i++) {
                         clone.id = target.id + (i + 1);
                     }
-                } else {
-                    document.getElementsByClassName('section')[7].appendChild(clone);
-                    list = document.getElementsByClassName('cloned-tile');
-                    for (var i = 1; i <= list.length; i++) {
-                        clone.id = target.id + (i + 1);
-                    }
-                }
+                // } else {
+                //     document.getElementsByClassName('section')[7].appendChild(clone);
+                //     list = document.getElementsByClassName('cloned-tile');
+                //     for (var i = 1; i <= list.length; i++) {
+                //         clone.id = target.id + (i + 1);
+                //     }
+                // }
             })
 
             function dragMoveListener(event) {
@@ -249,18 +251,16 @@
             })
 
             $("#switch").click(() => {
-                socket.emit("switch", { room: roomName })
-                switchboard()
+                socket.emit("switch", { room: roomName });
+                switchboard();
             })
 
             $("#reset").click(() => {
-                socket.emit("reset", { room: roomName })
-                setBoard()
+                socket.emit("reset", { room: roomName });
+                setBoard();
             })
 
-            socket.on("reset_tiles", function () {
-                setBoard()
-            })
+            socket.on("reset_tiles", setBoard);
 
             //set up the highlight listeners for hover/mouseover event
             function setUpHoverEvent() {
@@ -275,7 +275,7 @@
             }
 
             function setBoard() {
-                $.get('http://localhost:8000/tiles').then((tiles) => {
+                $.get('/tiles').then((tiles) => {
                     const { earth, starstop, starsleft, starsright, starsright2, starsbottom, dipper, dipper2, crescent } = tiles.sideOne[0]
                     const { prefixes, endingsright, endingsbottom, roots } = tiles.sideTwo[0]
 
@@ -341,9 +341,7 @@
 
             setBoard()
 
-            socket.on('switch_boards', function () {
-                switchboard()
-            })
+            socket.on('switch_boards', switchboard);
 
             function switchboard() {
                 var backside = document.getElementById('backside');
@@ -371,7 +369,7 @@
 
             socket.on("terminate_by_teacher", function () {
                 console.log("teacher has terminated the room");
-                window.location.replace("http://localhost:8000/end");
+                window.location.replace("/end");
             });
 
             socket.on("user disconnected", function() {
@@ -418,11 +416,63 @@
                  Sound 
             ================ */
 
-            $(document).on('click',function(event){
-                console.log('id',event.target.innerText);
-                var id = event.target.innerText;
-                socket.emit('clicked',{id: id})
-            })
+            // $(document).on('click',function(event){
+            //     // socket.emit('clicked',{id: id})
+            //     // console.log(event.target.classList);
+            //     if($(event.target).parent().hasClass("cloned-tile")) {
+            //         console.log('id',event.target.innerText);
+            //         var id = event.target.innerText;
+            //         var section = $(event.target).parent().parent().attr("id");
+            //         console.log(`playing /audio/${section}/${id}.mp3`);
+            //         audio.src = `/audio/${section}/${id}.mp3`;
+            //         audio.load();
+            //         audio.play();
+            //     }
+            // })
+
+            function playNext() {
+                if(playlist.length > 0) {
+                    var next_sound = playlist.pop();
+                    audio.src = `/audio/${next_sound.section}/${next_sound.id}.mp3`;
+                    audio.load();
+                    audio.play();
+                }
+            }
+            function playAudio() {
+                // console.log("playAudio()")
+                playlist = [];
+                $.each($(".cloned-tile"), function(idx, tile) {
+                    playlist.push({
+                        section: $(tile).parent().attr("id"),
+                        id: $.trim($($(tile).children("p")[0]).text()),
+                        left: $(tile).position().left + 5,
+                        top: $(tile).position().top + 5
+                    });
+                });
+                target_box = $("#backside").css("display") == "none" ? "#frontword" : "#backword";
+                playlist = playlist.filter(function(tile) {
+                    pos = $(target_box).position();
+                    w = $(target_box).width();
+                    h = $(target_box).height();
+                    return tile.left >= pos.left &&
+                        tile.top >= pos.top &&
+                        tile.left <= pos.left + w &&
+                        tile.top <= pos.top + h;
+                });
+                playlist.sort(function(a, b){return b.left - a.left});
+                if(playlist.length > 0) {
+                    playNext();
+                }
+            }
+            $("#play_audio").click(function() {
+                // console.log("emitting playing_audio")
+                socket.emit("playing_audio", {
+                    room: roomName
+                });
+                playAudio();
+            });
+            socket.on("play_audio", playAudio);
+            audio.addEventListener("ended", playNext);
 
             socket.on('clicked',(data)=>{
                 console.log('sending back from server data',data.id)
@@ -435,6 +485,7 @@
 </head>
 
 <body>
+        
     <div class="container">
         <div id="title">
             <h2 id="Welcome" name='<%=id %>' admin='<%=admin %>'>Learning Board</h2>
@@ -452,9 +503,10 @@
                         <button class="btn btn-primary ib">Back to Dashboard</button>
                     </a> -->
                     <button class="btn btn-warning ib" id="reset">Reset Board</button>
-                    <a href="http://localhost:8000/admin/dashboard">
+                    <a href="/admin/dashboard">
                         <button class="btn btn-danger ib" id="terminate">Terminate</button>
                     </a>
+                    <button class="btn btn-primary" id="play_audio">Play Audio</button>
                 </div>
 
                 <!-- <div id="light">
@@ -500,6 +552,7 @@
 					</div>
                     <div class="section" id="starsbottom">
                     </div>
+                    <div class="wordbox" id="frontword"></div>
                 </div>
             </div>
         </div>
@@ -512,11 +565,13 @@
                     <div class="section" id="prefixes"></div>
                     <div class="section" id="endingsright"></div>
                     <div class="section" id="endingsbottom"></div>
+                    <div class="wordbox" id="backword"></div>
                 </div>
             </div>
         </div>
     </div>
-
+    
+    
 </body>
 
 

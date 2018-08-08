@@ -5,70 +5,30 @@
     <title>LearnUp Phonics Board - Home</title>
     <link rel="stylesheet" href="/stylesheets/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Commented these links out and added the 4 links below
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>
+    
 </head>
 
 <body>
-    <!-- page header -->
-    <div id="header">
-        <h1>LearnUp Phonics Learning Board</h1>
-    </div>
+    
+    <!-- "Including" the header file -->
+    <% include header.ejs %>
+    
 
     <!-- outer container -->
     <div id="wrapper">
         <div id="left">
-            <!-- sign in form -->
-            <form class="well" action="#" method="post">
-                <fieldset>
-                    <legend>Sign In</legend>
-
-                    <!-- email field -->
-                    <div class="inputField, form-group">
-                        <label class="control-label col-md-2" for="email">Email:</label>
-                        <div class="col-md-12 inputGroupContainer">
-                            <!-- input field width -->
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                    <i class="glyphicon glyphicon-envelope"></i>
-                                </span>
-                                <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- password field -->
-                    <div class="form-group">
-                        <label class="control-label col-md-2" for="password">Password:</label>
-                        <div class="col-md-12 inputGroupContainer">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                    <i class="glyphicon glyphicon-lock"></i>
-                                </span>
-                                <input type="password" class="form-control" id="password" placeholder="Password" name="password">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- "Remember me" checkbox -->
-                    <div class="form-group">
-                        <div class="col-md-6">
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" name="remember"> Remember me</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- submit button -->
-                    <div class="form-group">
-                        <div class="col-md-10">
-                            <button type="submit" id="formButton" class="btn btn-default">Submit</button>
-                        </div>
-                    </div>
-                </fieldset>
-            </form>
+            
+            
             <!-- Admin Log in form -->
             <form class="well" action="/login" method="post">
                 <fieldset>
@@ -116,7 +76,7 @@
                                 </div>
                                 <div class='forgetpw'>  
                                     <div class="col-md-6">                                  
-                                        <a href='forgetpw'>Forget password</a>
+                                        <a href='forgetpw'>Forgot password?</a>
                                     </div>
                                 </div>
                             </div>
@@ -145,6 +105,10 @@
             </div>
         </div>
     </div>
+
+    <!-- "Including" the footer file -->
+    <% include footer.ejs %>
+    
 
 </body>
 

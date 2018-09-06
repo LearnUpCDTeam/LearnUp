@@ -217,6 +217,10 @@ io.sockets.on('connection', (socket) => {
     socket.broadcast.to(data.room).emit('play_audio');
   });
 
+  socket.on('playing_tile', (data) => {
+    socket.broadcast.to(data.room).emit('play_tile', data);
+  })
+
   socket.on('terminate', (data) => {
     socket.broadcast.emit('terminate_by_teacher');
     io.emit('user disconnected');

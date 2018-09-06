@@ -416,19 +416,24 @@
                  Sound 
             ================ */
 
-            // $(document).on('click',function(event){
-            //     // socket.emit('clicked',{id: id})
-            //     // console.log(event.target.classList);
-            //     if($(event.target).parent().hasClass("cloned-tile")) {
-            //         console.log('id',event.target.innerText);
-            //         var id = event.target.innerText;
-            //         var section = $(event.target).parent().parent().attr("id");
-            //         console.log(`playing /audio/${section}/${id}.mp3`);
-            //         audio.src = `/audio/${section}/${id}.mp3`;
-            //         audio.load();
-            //         audio.play();
-            //     }
-            // })
+            $(document).on('click',function(event){
+                // socket.emit('clicked',{id: id})
+                // console.log(event.target.classList);
+                // if($(event.target).parent().hasClass("cloned-tile")) {
+                    console.log('id',event.target.innerText);
+                    var id = event.target.innerText;
+                    var section = $(event.target).parent().parent().attr("id");
+                    socket.emit("playing_tile", {id, section, room: roomName});
+                    console.log(`playing /audio/${section}/${id}.mp3`);
+                    playTile(id, section);
+                // }
+            })
+
+            function playTile(id, section) {
+                audio.src = `/audio/${section}/${id}.mp3`;
+                audio.load();
+                audio.play();
+            }
 
             function playNext() {
                 if(playlist.length > 0) {
@@ -473,6 +478,7 @@
             });
             socket.on("play_audio", playAudio);
             audio.addEventListener("ended", playNext);
+            socket.on("play_tile", (data) => playTile(data.id, data.section));
 
             socket.on('clicked',(data)=>{
                 console.log('sending back from server data',data.id)

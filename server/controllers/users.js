@@ -75,22 +75,24 @@ module.exports = {
             }).then((newUser) => {
             newUser.resettoken = jwt.sign({ email: newUser.email }, secret, { expiresIn: '24h' });
             var transporter = nodemailer.createTransport({
-              service: 'gmail',
+              host: "email-smtp.us-west-2.amazonaws.com",
+              port: 465,
+              secure: true,
               auth: {
-                user: 'learnup2017@gmail.com',
-                pass: 'Dojo2017'
+                user: process.env.SES_USER,
+                pass: process.env.SES_PASS
               }
             });
   
             var content = `
               Hello,<br><br> You have a new account created by the admin of LearnUP team. Please click on this link below to set your password: <br>
-              <a href="http://localhost:8000/reset/${newUser.resettoken}">http://localhost:8000/reset/${newUser.resettoken}</a><br><br>
+              <a href="https://phonicsboard.learnupcenters.org/reset/${newUser.resettoken}">https://phonicsboard.learnupcenters.org/reset/${newUser.resettoken}</a><br><br>
               This link will expire in 24 hours.<br><br>
               
               LearnUP San Jose`
   
             var mailOptions = {
-              from: 'learnup2017@gmail.com',
+              from: 'phonicsboard@learnupcenters.org',
               to: newUser.email,
               subject: 'Your new LearnUP account',
               html: content
@@ -248,16 +250,18 @@ module.exports = {
         } else {
           user.resettoken = jwt.sign({ email: user.email }, secret, { expiresIn: '24h' });
           var transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: "email-smtp.us-west-2.amazonaws.com",
+            port: 465,
+            secure: true,
             auth: {
-              user: 'learnup2017@gmail.com',
-              pass: 'Dojo2017'
+              user: process.env.SES_USER,
+              pass: process.env.SES_PASS
             }
           });
 
           var content = `
             Hello,<br><br> You recently request a password rest link. Please click on the link below to reset your password: <br><br>
-            <a href="http://localhost:8000/reset/${user.resettoken}">http://localhost:8000/reset/${user.resettoken}</a>
+            <a href="https://phonicsboard.learnupcenters.org/reset/${user.resettoken}">https://phonicsboard.learnupcenters.org/reset/${user.resettoken}</a>
             `
 
           var mailList = [
@@ -265,7 +269,7 @@ module.exports = {
           ]
 
           var mailOptions = {
-            from: 'learnup2017@gmail.com',
+            from: 'phonicsboard@learnupcenters.org',
             to: mailList,
             subject: 'Rest Password Link Request',
             html: content
@@ -316,10 +320,12 @@ module.exports = {
           if(updateUser.passwordReset == undefined){
             updateUser.passwordReset = 1;
             var transporter = nodemailer.createTransport({
-              service: 'gmail',
+              host: "email-smtp.us-west-2.amazonaws.com",
+              port: 465,
+              secure: true,
               auth: {
-                user: 'learnup2017@gmail.com',
-                pass: 'Dojo2017'
+                user: process.env.SES_USER,
+                pass: process.env.SES_PASS
               }
             });
   
@@ -328,7 +334,7 @@ module.exports = {
               `
 
             var mailOptions = {
-              from: 'learnup2017@gmail.com',
+              from: 'phonicsboard@learnupcenters.org',
               to: 'learnup2017@gmail.com',
               subject: 'New User Reset Password',
               html: content

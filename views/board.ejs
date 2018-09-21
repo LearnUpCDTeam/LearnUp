@@ -419,14 +419,14 @@
             $(document).on('click',function(event){
                 // socket.emit('clicked',{id: id})
                 // console.log(event.target.classList);
-                // if($(event.target).parent().hasClass("cloned-tile")) {
+                if($(event.target).parent().hasClass("tile-source")) {
                     console.log('id',event.target.innerText);
                     var id = event.target.innerText;
                     var section = $(event.target).parent().parent().attr("id");
                     socket.emit("playing_tile", {id, section, room: roomName});
                     console.log(`playing /audio/${section}/${id}.mp3`);
                     playTile(id, section);
-                // }
+                }
             })
 
             function playTile(id, section) {
